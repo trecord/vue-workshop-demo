@@ -90,5 +90,13 @@ export default {
       title: 'Vancity_Vue.js'
     }
   }
-}
+};
 </script>
+<style>
+main.content {
+  display:block;
+  margin: 0 auto;
+  max-width: 100%;
+  width: 1024px;
+}
+</style>

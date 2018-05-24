@@ -61,10 +61,10 @@ vue add vuetify
 1) "y" allow Vuetify to replace app.vue and helloworld.vue
 2) "y" use custom theme
 3) "n" use a la carte components
- "y" use babel/polyfilly
+4) "y" use babel/polyfilly
 ![Vue Setup: Vuetify](static/images/vue_setup_1.png)
 
-There are two dependencies that we'll be adding to the project: Babel, and Axios. Istall them with the following commands.
+There are two dependencies that we'll be adding to the project: Babel (which will allow us to use ES2015+ without worrying about browser support), and Axios (which we will use to connect to an API later). Install them with the following commands.
 
 ``` bash
 npm install --save @babel/polyfill
@@ -90,7 +90,20 @@ Vue has a wide variety of core and add-on features, so let's start with some of 
 
 Right now, when we launch our app, the navigation bar defaults to being open. That's annoying! We'll want to change that.
 
-If you open up the folder "src" in your vvjs folder you'll see an "App.vue" file, a file which serves as the root component of this application. A .vue files is broken into three sections: the template, the scripts, and the styles (App.vue only has the templates and the scripts). If you look at the template section for App.vue, you'll see that there's a component called "v-navigation-drawer" that has something called a "v-model" which is set to "drawer." If you scroll down a little to the "scripts" section, you will see that there is a set of "data" which includes "drawer"... and it is set to "true". The values in the data here are what is controlling whether the nav bar should be displayed or not!
+If you open up the folder "src" in your vvjs folder you'll see an "App.vue" file, a file which serves as the root component of this application. A .vue files i broken into three sections: the template, the scripts, and the styles. App.vue only has the templates and the scripts right now, but if we want to horizontally center the content in our application we can add the following at the bottom of the file:
+
+```html
+<style>
+main.content {
+	display:block;
+	margin: 0 auto;
+	max-width: 100%;
+	width: 1024px;
+}
+</style>
+``` 
+
+If you look at the template section for App.vue (at the top), you'll see that there's a component called "v-navigation-drawer" that has something called a "v-model" which is set to "drawer." If you scroll down a little to the "scripts" section, you will see that there is a set of "data" which includes "drawer"... and it is set to "true". The values in the data here are what is controlling whether the nav bar should be displayed or not!
 
 ![Vue Nav: Drawer](static/images/nav_1.png)
 ![Vue Data: Drawer](static/images/nav_3.png)
@@ -119,26 +132,103 @@ export default {
 If you reload your page, that annoying nav won't be open by default, and we'll have our new title. How did the title change? If you scroll back up to the template, you'll see a "v-toolbar-title" element that has a v-text attribute set to "title." 
 ![Vue Data: Drawer 2](static/images/nav_4.png)
 
+Data in Vue can be used to store booleans, integers, strings, arrays, and objects. It's the basic building block of working with Vue, and can be 
+
 ### Data Binding and Methods
 
- introduces a few concepts that we'll want to go over. The first: data binding.
+#### Data binding
 
-#### Two-way binding
+Let's open up the file src/views/About.vue. You'll see there's an element titled "HelloWorld." Let's get rid of that for now, and replace it with the following template:
+
+```html
+<template>
+  <div class="home">
+    <img src="../assets/logo.png">
+    <h1 v-text="msg"></h1>
+    <input type="text" name="message" v-model="msg"/>
+  </div>
+</template>
+```
+
+Down in the scripts section let's add the following new data to it:
+
+```javascript
+  data () {
+    return {
+      msg: "Testing v-model"
+    }
+  },
+```
+Save and open up your browser to your local host. You'll see the message "Testing v-model" with an input below it. Try changing the text in the input. The header above the input updates as you type!
+
+You can use "v-text" to insert data in an element, or you can place {{ data-name }} inside the element -- either will work. You can also use the "v-model" attribute to bind data to an element that will also update the data, like a text element (this is called two-way data binding).
+
+#### Repeating data sets
+
+Now let's take a look at how to repeat data in Vue. Let's start by updating the data so that it HAS an array of data. I don't know why you guys got into promgramming, but I did it to keep track of my Pokemon. Let's update the data so it has the following:
+
+```javascript
+data () {
+    return {
+      msg: "Testing v-model",
+      monsters: [
+        {
+          name:"Cougher", 
+          species:"Koffing",
+          avatar:"https://cdn.bulbagarden.net/upload/1/17/109Koffing.png",
+          type: "Gas/Poison"
+        },
+        {
+          name:"Zapper", 
+          species:"Jolteon", 
+          avatar:"https://cdn.bulbagarden.net/upload/b/bb/135Jolteon.png",
+          type: "Electric"
+        },
+        {
+          name:"Scratcher", 
+          species:"Mankey", 
+          avatar:"https://cdn.bulbagarden.net/upload/4/41/056Mankey.png",
+          type: "Fighting"
+        }
+      ]
+    }
+},
+```
+
+Then let's add the following to the template, below our input:
+```html
+<h2>My Pokémon:</h2>
+<v-list two-line>
+  <v-list-tile v-for="(monster, index) in monsters">
+    <v-list-tile-avatar>
+      <img :src="monster.avatar">
+    </v-list-tile-avatar>
+    <v-list-tile-content>
+      <v-list-tile-title><strong>Name:</strong> {{ monster.name }}</v-list-tile-title>
+      <v-list-tile-sub-title><strong>Species:</strong> {{ monster.species }} <strong>Type:</strong> {{ monster.type }}</v-list-tile-sub-title>
+    </v-list-tile-content>
+  </v-list-tile>
+</v-list>
+```
+
+Notice that the element "v-list-tile" has the following attribute: v-for="monster in monsters". Following that, it binds the image by putting the "avatar" key of the monster to the :src attribute. You can bind information from data to a regular html attribute by putting a colon : before it, like that. We also have the pokémon's name, species, and type getting inserted into this repeating tile by inserting it in double curly brackets.
 
 #### Methods
 
 If you looked closely at App.vue, you'd have seen there is also a button with the element name "v-toolbar-side-icon" that has an attribute called "@click.stop" that was setting the "drawer" to != "drawer".
 ![Vue Data: Drawer](static/images/nav_2.png)
 
-This is what was toggling the display of the nav item.
+This is what was toggling the display of the nav item. Why don't we try some of that, but this time see if it can allow us to access a more interesting method.
 
-#### Repeating data sets
-
-
+## Stepping things up
 ### Routing
 <router-link to="home">Home</router-link>
 
 ### Axios & connectivity
 
+### Components
+
 ### Computed Properties
+
+### Watchers
 
