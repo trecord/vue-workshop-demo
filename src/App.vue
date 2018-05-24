@@ -22,6 +22,8 @@
             <v-list-tile-title v-text="item.title"></v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
+        <router-link to="">Home</router-link>
+        <router-link to="about">About</router-link>
       </v-list>
     </v-navigation-drawer>
     <v-toolbar
@@ -76,16 +78,16 @@ export default {
   data () {
     return {
       clipped: false,
-      drawer: true,
+      drawer: false,
       fixed: false,
       items: [{
         icon: 'bubble_chart',
-        title: 'Inspire'
+        title: 'Vancity Vue JS'
       }],
       miniVariant: false,
       right: true,
       rightDrawer: false,
-      title: 'Vuetify.js'
+      title: 'Vancity_Vue.js'
     }
   }
 }

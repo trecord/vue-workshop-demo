@@ -14,7 +14,7 @@ npm install -g @vue/cli
 yarn global add @vue/cli
 ```
 
-Once that is done you should have the newest 
+Once that is done you should have the newest version of Vue-cli. Check that you do by running the following:
 
 ``` bash
 vue -V
@@ -44,10 +44,11 @@ You'll be given a set of options. You will want to "manually" select features. M
 Once the initial installation is completed, you'll have a working project! You can already see something if you run the following:
 
 ``` bash
+cd vvjs
 npm run serve
 ```
 
-Now go to in your browser. You can press control + C in your terminal to stop the process running this
+Now go to in your browser. You can press control + C in your terminal to stop the process running the development instance of your site.
 
 ### Install Vuetify/Babel/Axios
 
@@ -62,8 +63,6 @@ vue add vuetify
 3) "n" use a la carte components
  "y" use babel/polyfilly
 ![Vue Setup: Vuetify](static/images/vue_setup_1.png)
-
-### Add Babel and Axios
 
 There are two dependencies that we'll be adding to the project: Babel, and Axios. Istall them with the following commands.
 
@@ -81,38 +80,65 @@ import VueAxios from 'vue-axios'
 
 Vue.use(VueAxios, axios)
 ```
-We'll be moving
+We'll be moving on to actually getting started on building something now!
 
 ## Getting started
 
-### Data models
+Vue has a wide variety of core and add-on features, so let's start with some of the basics.
 
-Open 
+### Reading a Vue file
 
+Right now, when we launch our app, the navigation bar defaults to being open. That's annoying! We'll want to change that.
 
-## Build Setup
+If you open up the folder "src" in your vvjs folder you'll see an "App.vue" file, a file which serves as the root component of this application. A .vue files is broken into three sections: the template, the scripts, and the styles (App.vue only has the templates and the scripts). If you look at the template section for App.vue, you'll see that there's a component called "v-navigation-drawer" that has something called a "v-model" which is set to "drawer." If you scroll down a little to the "scripts" section, you will see that there is a set of "data" which includes "drawer"... and it is set to "true". The values in the data here are what is controlling whether the nav bar should be displayed or not!
 
-``` bash
-# install dependencies
-npm install
+![Vue Nav: Drawer](static/images/nav_1.png)
+![Vue Data: Drawer](static/images/nav_3.png)
 
-# serve with hot reload at localhost:8080
-npm run dev
-
-# build for production with minification
-npm run build
-
-# build for production and view the bundle analyzer report
-npm run build --report
-
-# run unit tests
-npm run unit
-
-# run e2e tests
-npm run e2e
-
-# run all tests
-npm test
+Let's change that set of data. Set "drawer" to false. While we're at it, let's also change the "title" to 'Vancity_Vue.js'. This is what our data now looks like:
+```javascript
+export default {
+  name: 'App',
+  data () {
+    return {
+      clipped: false,
+      drawer: false,
+      fixed: false,
+      items: [{
+        icon: 'bubble_chart',
+        title: 'Vancity Vue JS'
+      }],
+      miniVariant: false,
+      right: true,
+      rightDrawer: false,
+      title: 'Vancity_Vue.js'
+    }
+  }
+}
 ```
+If you reload your page, that annoying nav won't be open by default, and we'll have our new title. How did the title change? If you scroll back up to the template, you'll see a "v-toolbar-title" element that has a v-text attribute set to "title." 
+![Vue Data: Drawer 2](static/images/nav_4.png)
 
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+### Data Binding and Methods
+
+ introduces a few concepts that we'll want to go over. The first: data binding.
+
+#### Two-way binding
+
+#### Methods
+
+If you looked closely at App.vue, you'd have seen there is also a button with the element name "v-toolbar-side-icon" that has an attribute called "@click.stop" that was setting the "drawer" to != "drawer".
+![Vue Data: Drawer](static/images/nav_2.png)
+
+This is what was toggling the display of the nav item.
+
+#### Repeating data sets
+
+
+### Routing
+<router-link to="home">Home</router-link>
+
+### Axios & connectivity
+
+### Computed Properties
+
