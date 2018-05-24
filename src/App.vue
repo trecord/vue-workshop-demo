@@ -95,7 +95,7 @@ export default {
 <style>
 main.content {
   display:block;
-  margin: 0 auto;
+  margin: 20px auto;
   max-width: 100%;
   width: 1024px;
 }

@@ -96,7 +96,7 @@ If you open up the folder "src" in your vvjs folder you'll see an "App.vue" file
 <style>
 main.content {
 	display:block;
-	margin: 0 auto;
+	margin: 20px auto;
 	max-width: 100%;
 	width: 1024px;
 }
@@ -132,7 +132,7 @@ export default {
 If you reload your page, that annoying nav won't be open by default, and we'll have our new title. How did the title change? If you scroll back up to the template, you'll see a "v-toolbar-title" element that has a v-text attribute set to "title." 
 ![Vue Data: Drawer 2](static/images/nav_4.png)
 
-Data in Vue can be used to store booleans, integers, strings, arrays, and objects. It's the basic building block of working with Vue, and can be 
+Data in Vue can be used to store booleans, integers, strings, arrays, and objects. It's the basic building block of working with Vue, so why don't we dive a little deeper into it. 
 
 ### Data Binding and Methods
 
