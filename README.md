@@ -67,7 +67,6 @@ vue add vuetify
 There are two dependencies that we'll be adding to the project: Babel (which will allow us to use ES2015+ without worrying about browser support), and Axios (which we will use to connect to an API later). Install them with the following commands.
 
 ``` bash
-npm install --save @babel/polyfill
 npm install --save axios vue-axios
 ```
 
@@ -124,7 +123,7 @@ export default {
       miniVariant: false,
       right: true,
       rightDrawer: false,
-      title: 'Vancity_Vue.js'
+      title: 'Vancity Vue.js'
     }
   }
 }
@@ -138,7 +137,7 @@ Data in Vue can be used to store booleans, integers, strings, arrays, and object
 
 #### Data binding
 
-Let's open up the file src/views/About.vue. You'll see there's an element titled "HelloWorld." Let's get rid of that for now, and replace it with the following template:
+Let's open up the file src/views/About.vue. You'll see there's an element titled "about." Let's get rid of that for now, and replace it with the following template:
 
 ```html
 <template>
@@ -309,11 +308,12 @@ export default {
   name: 'list',
   data () {
     return {
-      monsters: []
+      pokemons: []
     }
   },
   methods: {
-    getPokemon: function () {
+    async getPokemons() {
+
     }
   }
 };
@@ -346,9 +346,152 @@ Then in the array of lists, under the one for the about page, add the following:
 
 ### Axios & connectivity
 
-### Components
+Now adding pokemon manually is okay, but lets try hitting up an actual API for the data. We are going to access the Poke API and see what we can add to our app.  
+add the following code to your getPokemon method:
+
+```javascript
+const resp = await this.$http.get('https://pokeapi.co/api/v2/pokemon')
+return resp.data
+```
+
+now we can hook into the mounted vue lifecycle hook to make this call as soon as our element is ready
+
+![Vue lifecycle hooks](https://vuejs.org/images/lifecycle.png)
+
+we will be dealing with mounted to keep it simple as the element is ready and we can make any dom chances if neccessary.  
+Add the following after the data() method:
+```javascript
+async mounted() {
+  this.pokemons = await this.getPokemons()
+  console.log(this.pokemons)
+}
+```
+now refresh the page and open developer tools (f12) or right click the page and inspect element then press console.  
+You will see an object with a few options  
+```javascript
+{
+  count: 949, // the total number of pokemon in the database,
+  next: "https://pokeapi.co/api/v2/pokemon/?limit=20&offset=20", // the api endpoint for the next page of results
+  previous: null, // the url for the previous page of results
+  results: Array(20) // the first 20 pokemon from the list
+}
+```
+since we want the results we can add that to our getPokemon method return value
+```javascript
+const resp = await this.$http.get('https://pokeapi.co/api/v2/pokemon')
+return resp.data.results
+```
+Now that we have a list of pokemon in our console, lets display them on our list page
+Add the following to your template after the master list
+```html
+<h1>Master List</h1>
+<v-list>
+  <v-list-tile v-for="pokemon in pokemons" :key="pokemon.name">
+    <v-list-tile-content class="pokemon-name">
+      {{ pokemon.name }}
+    </v-list-tile-content>
+  </v-list-tile>
+</v-list>
+```
+And add a style tag at the bottom, note this one is scoped so it only applies to this page
+```css
+<style scoped>
+  .pokemon-name {
+    text-transform: capitalize
+  }
+</style>
+```
+Now lets make a new page where we can view the pokemon, create a new .vue file in the views folder, call it Pokemon.vue
+```html
+<template>
+  <div class="pokemon">
+    <h1>Name of the pokemon</h1>
+  </div>
+</template>
+<script>
+export default {
+  name: "pokemon",
+  data() {
+    return {
+      pokemon: null
+    };
+  },
+  async mounted() {
+  },
+  methods: {
+    async getPokemon() {
+    }
+  }
+}
+</script>
+<style scoped>
+
+</style>
+```
+Now lets add it to our routes so we can link it from our list. Go back to router.js and import the new component then add a new route to the list.
+```javascript
+import Pokemon from './views/Pokemon.vue'
+
+{
+  path: '/pokemon/:name',
+  name: 'pokemon',
+  component: Pokemon
+}
+```
+Now we can go back to our list and add a link to the v-list-tile element using a template literal.
+```html
+<v-list-tile :to="`pokemon/${pokemon.name}`" v-for="pokemon in pokemons" :key="pokemon.name">
+```
+Refresh the list page and the list items will now become clickable. Now we will go back to the pokemon.vue file to get more information about each pokemon. 
+Add the following to the getPokemon method:
+```javascript
+const resp = await this.$http.get(`https://pokeapi.co/api/v2/pokemon/${this.$route.params.name}`);
+return resp.data;
+```
+and to our mounted method:
+```javascript
+this.pokemon = await this.getPokemon()
+console.log(this.pokemon);
+```
+Now refresh the page and open up the developer tools again (f12). You should see an object with some information about the current pokemon!  
+Lets add some basic information to our template:
+```html
+<template>
+<div class="pokemon">
+  <h1>{{ pokemon.name }}</h1>
+  <img :src="pokemon.sprites.front_default" :alt="pokemon.name">
+</div>
+</template>
+```
+Now save it and refresh your page, you will notice that you get an error. That is because the template is trying to access properties of the  
+pokemon object which doesn't exist yet. Lets throw a v-if on the main div
+```html
+<div class="pokemon" v-if="pokemon">
+```
+Your page should now show a basic page with the selected pokemon's name and picture
 
 ### Computed Properties
+Now lets say we want to display the types that this pokemon is, since we don't know how many types the pokemon will have, and its a more complex object we can't just slap it into the template:
+```html
+<h4>Types: {{ pokemon.types }}</h4>
+```
+For this we can use a computed property. A computed property is a good way to offload any complex logic out of the template and into your javascript.  
+Add a new property to your component called computed:
+```javascript
+computed: {
+  types() {
+    const pokeTypes = this.pokemon.types.map(pt => pt.type.name)
+    return pokeTypes.join(' / ')
+  }
+}
+```
+Then call it in your template like a normal variable
+```html
+<h4>Types: {{ types }}</h4>
+```
+And you should see the types!
+
+### Components
 
 ### Watchers
 
