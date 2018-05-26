@@ -22,8 +22,15 @@
             <v-list-tile-title v-text="item.title"></v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
-        <router-link to="">Home</router-link>
-        <router-link to="about">About</router-link>
+        <v-list-tile>
+          <router-link to="/">Home</router-link>
+        </v-list-tile>
+        <v-list-tile>
+          <router-link to="/about">About</router-link>
+        </v-list-tile>
+        <v-list-tile>
+          <router-link to="/list">List</router-link>
+        </v-list-tile>
       </v-list>
     </v-navigation-drawer>
     <v-toolbar

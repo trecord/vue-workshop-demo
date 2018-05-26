@@ -199,7 +199,7 @@ Then let's add the following to the template, below our input:
 ```html
 <h2>My Pokémon:</h2>
 <v-list two-line>
-  <v-list-tile v-for="(monster, index) in monsters">
+  <v-list-tile v-for="(monster, index) in monsters" :key="index">
     <v-list-tile-avatar>
       <img :src="monster.avatar">
     </v-list-tile-avatar>
@@ -213,16 +213,136 @@ Then let's add the following to the template, below our input:
 
 Notice that the element "v-list-tile" has the following attribute: v-for="monster in monsters". Following that, it binds the image by putting the "avatar" key of the monster to the :src attribute. You can bind information from data to a regular html attribute by putting a colon : before it, like that. We also have the pokémon's name, species, and type getting inserted into this repeating tile by inserting it in double curly brackets.
 
-#### Methods
+#### Methods (& Conditionals)
 
 If you looked closely at App.vue, you'd have seen there is also a button with the element name "v-toolbar-side-icon" that has an attribute called "@click.stop" that was setting the "drawer" to != "drawer".
 ![Vue Data: Drawer](static/images/nav_2.png)
 
-This is what was toggling the display of the nav item. Why don't we try some of that, but this time see if it can allow us to access a more interesting method.
+This is what was toggling the display of the nav item. But what if we want to have a method that is more than one line long? Let's try adding an input and button that allows us to add new monsters to our roster that we can name. Let's start by adding a field in our data to hold our monster's name: 
+
+```javascript
+data () {
+    return {
+      msg: "Testing v-model",
+      newName: "",
+```
+
+Now let's also add a little form to add the charmander. Under our pokémon list let's add the following:
+
+```html
+<div>
+  <h3>Add a Charmander:</h3>
+  <form>
+    <v-text-field
+      v-model="newName"
+      label="New Charmander Name"
+    ></v-text-field>
+      <v-btn v-if="newName" @click.stop="addPokemon()">Add Pokémon</v-btn>
+  </form>
+</div>
+```
+
+This will give us a little form with an input that allows us to specify a name, and a button that will call a method called "addPokemon." You might also notice that there is an attribute on the button titled 'v-if="newName".' This will check to make sure that you've specified a name for your Charmander before you add it to your list. It would be a crime not to give your Pokémon a name. We'll also need to add the method to handle adding
+
+```javascript
+  methods: {
+    addPokemon: function () {
+      let newPokemon = {
+          name: this.newName, 
+          species: "Charmander", 
+          avatar: "https://cdn.bulbagarden.net/upload/thumb/7/73/004Charmander.png/500px-004Charmander.png",
+          type: "Fire"
+        };
+      this.monsters.push(newPokemon);
+      this.newName = "";
+    }
+  },
+```
+
+Now that list is getting a little long! I only like to have 3 pokemon in my collection at any time, so let's add a method to remove pokemon as well. Above addPokemon, let's add a new function that looks like this:
+
+```javascript
+removePokemon: function (index) {
+  this.monsters.splice(index, 1);
+},
+```
+
+Now let's add a button to remove the pokemon. Just before the closing "</v-list-tile>" tag, add the following:
+
+```html
+<v-btn @click.stop="removePokemon(index)">Remove Pokémon</v-btn>
+```
+Clicking on this button will now allow you to quickly remove those pesky extra pokémon!
+
+We now have a form with a method that allows us to modify the data on this page, including user-specified inputs! Now, let's move on to the next phase: changing views and loading in external data.
+
 
 ## Stepping things up
 ### Routing
-<router-link to="home">Home</router-link>
+
+We're done with Home.vue for the moment, so let's return to src/App.vue. Inside the element <v-navigation-drawer> put the following:
+
+```html
+<v-list-tile>
+  <router-link to="/">Home</router-link>
+</v-list-tile>
+<v-list-tile>
+  <router-link to="/about">About</router-link>
+</v-list-tile>
+<v-list-tile>
+  <router-link to="/list">List</router-link>
+</v-list-tile>
+```
+
+Now we have three nav items in our navigation bar! If you click on the "home" and "about" links the router will take you to our home page, and an about page. The third link won't work yet. We'll need to create a new view, and then add it to the router. Let's start by saving a new file to src/views/List.vue with the following markup:
+
+```html
+<template>
+  <div class="master-list">
+    <h1>Master List</h1>
+  </div>
+</template>
+
+<script>
+
+export default {
+  name: 'list',
+  data () {
+    return {
+      monsters: []
+    }
+  },
+  methods: {
+    getPokemon: function () {
+    }
+  }
+};
+</script>
+```
+
+Now let's open up src/router.js and add a route for this new page. Add the following to the bottom of the list of imports:
+
+```javascript
+import List from './views/List.vue'
+```
+
+Then in the array of lists, under the one for the about page, add the following:
+
+```javascript
+	{
+      path: '/about',
+      name: 'about',
+      component: About
+    },
+	{
+      path: '/list',
+      name: 'list',
+      component: List
+    }
+  ]
+```
+
+
 
 ### Axios & connectivity
 
