@@ -401,20 +401,22 @@ And add a style tag at the bottom, note this one is scoped so it only applies to
   }
 </style>
 ```
-Now lets make a new page where we can view the pokemon, create a new .vue file in the views folder, call it Pokemon.vue
+### Components & Props
+
+Now lets make a new component which will allow us to view the pokemon! Create a new .vue file in the views folder, call it Pokemon.vue
 ```html
 <template>
-  <div class="pokemon">
-    <h1>Name of the pokemon</h1>
-  </div>
+  <v-list-tile>
+  </v-list-tile>
 </template>
 <script>
 export default {
   name: "pokemon",
-  data() {
+  props: ['url'],
+  data () {
     return {
       pokemon: null
-    };
+    }
   },
   async mounted() {
   },
@@ -422,28 +424,35 @@ export default {
     async getPokemon() {
     }
   }
-}
+};
 </script>
 <style scoped>
 
 </style>
 ```
-Now lets add it to our routes so we can link it from our list. Go back to router.js and import the new component then add a new route to the list.
-```javascript
-import Pokemon from './views/Pokemon.vue'
 
-{
-  path: '/pokemon/:name',
-  name: 'pokemon',
-  component: Pokemon
-}
+Now lets add it to our list view, so we can see these details in the list. Go back to List.vue and import the new component:
+
+```javascript
+// @ is an alias to /src
+import pokemon from '@/components/Pokemon.vue'
 ```
-Now we can go back to our list and add a link to the v-list-tile element using a template literal.
+Then, underneath the data add a new value for the component: 
+```javascript
+  components: {
+    pokemon
+  },
+```
+Now we can go back up to our template and add in the component:
 ```html
-<v-list-tile :to="`pokemon/${pokemon.name}`" v-for="pokemon in pokemons" :key="pokemon.name">
+	<v-list v-if="pokemons">
+	  <pokemon v-for="pokemon in pokemons" 
+	    :key="pokemon.name"
+	    :url="pokemon.url">
+	  </pokemon>
+	</v-list>
 ```
-Refresh the list page and the list items will now become clickable. Now we will go back to the pokemon.vue file to get more information about each pokemon. 
-Add the following to the getPokemon method:
+Now each of the pokemon will have their own instance of the pokemon component, which is getting passed the URL which contains the information for that pokemon. Now we need each to load in their data. Open up the Pokemon.vue component file again, and add the following to the getPokemon method:
 ```javascript
 const resp = await this.$http.get(`https://pokeapi.co/api/v2/pokemon/${this.$route.params.name}`);
 return resp.data;
@@ -457,16 +466,21 @@ Now refresh the page and open up the developer tools again (f12). You should see
 Lets add some basic information to our template:
 ```html
 <template>
-<div class="pokemon">
-  <h1>{{ pokemon.name }}</h1>
-  <img :src="pokemon.sprites.front_default" :alt="pokemon.name">
-</div>
+  <v-list-tile v-if="pokemon">
+    <v-list-tile-avatar >
+      <img :src="pokemon.sprites.front_default" :alt="pokemon.name">
+    </v-list-tile-avatar>
+    <v-list-tile-content>
+      <v-list-tile-title><strong>Species:</strong> {{ pokemon.name }}</v-list-tile-title>
+      <v-list-tile-sub-title><strong>Type: </strong> </v-list-tile-sub-title>
+    </v-list-tile-content>
+  </v-list-tile>
 </template>
 ```
 Now save it and refresh your page, you will notice that you get an error. That is because the template is trying to access properties of the  
 pokemon object which doesn't exist yet. Lets throw a v-if on the main div
 ```html
-<div class="pokemon" v-if="pokemon">
+<v-list-tile v-if="pokemon">
 ```
 Your page should now show a basic page with the selected pokemon's name and picture
 
@@ -487,11 +501,10 @@ computed: {
 ```
 Then call it in your template like a normal variable
 ```html
-<h4>Types: {{ types }}</h4>
+<v-list-tile-sub-title><strong>Type: </strong> <span v-text="types"></span></v-list-tile-sub-title>
 ```
 And you should see the types!
 
-### Components
 
 ### Watchers
 
