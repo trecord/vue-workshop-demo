@@ -4,6 +4,7 @@
     <v-list v-if="pokemons">
       <pokemon v-for="pokemon in pokemons" 
         :key="pokemon.name"
+        :name="pokemon.name"
         :url="pokemon.url">
       </pokemon>
     </v-list>
