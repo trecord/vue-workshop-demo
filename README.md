@@ -294,97 +294,155 @@ We now have a form with a method that allows us to modify the data on this page,
 
 
 ## Stepping things up
-### Routing
 
-We're done with Home.vue for the moment, so let's return to src/App.vue. Inside the element <v-navigation-drawer> put the following:
+### Theming
+First lets set our vuetify theme. Open the vuetify.js file in the plugins folder and change the theme values to these(or whichever you choose):
+```javascript
+primary: '#FFDE00',
+secondary: '#3B4CCA',
+accent: '#CC0000',
+error: '#FF0000',
+info: '#FFOE00',
+success: '#4CAF50',
+warning: '#FFC107'
 
-```html
-<v-list-tile>
-  <router-link to="/">Home</router-link>
-</v-list-tile>
-<v-list-tile>
-  <router-link to="/about">About</router-link>
-</v-list-tile>
-<v-list-tile>
-  <router-link to="/list">List</router-link>
-</v-list-tile>
 ```
 
-Now we have three nav items in our navigation bar! If you click on the "home" and "about" links the router will take you to our home page, and an about page. The third link won't work yet. We'll need to create a new view, and then add it to the router. Let's start by saving a new file to src/views/List.vue with the following markup:
-
+### Routing
+Alright we're done with learning the basics, now lets create a real application! replace your App.vue with the following.  
 ```html
 <template>
-  <div class="master-list">
-    <h1>Pokemon List</h1>
+  <v-app>
+    <v-navigation-drawer
+      class="secondary pa-3"
+      persistent
+      v-model="drawer"
+      enable-resize-watcher
+      fixed
+      dark
+      app
+    >
+      <h2 class="white--text">Your Menu</h2>
+      <v-list>
+        <v-list-tile to="/">
+          <v-icon class="mr-2" small>home</v-icon>
+          Home
+        </v-list-tile>
+        <v-list-tile to="/about">
+          <v-icon class="mr-2" small>info</v-icon>
+          About
+        </v-list-tile>
+        <v-list-tile to="/list">
+          <v-icon class="mr-2" small>list</v-icon>
+          List
+        </v-list-tile>
+      </v-list>
+    </v-navigation-drawer>
+    <v-toolbar
+      class="primary"
+      dark
+      app
+    >
+      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+      <v-toolbar-title v-text="title"></v-toolbar-title>
+    </v-toolbar>
+    <v-content>
+      <!-- Your pages will route here -->
+      <router-view/>
+    </v-content>
+  </v-app>
+</template>
+
+<script>
+export default {
+  name: 'App',
+  data() {
+    return {
+      drawer: true,
+      title: 'Pokemon'
+    }
+  }
+}
+</script>
+
+<style>
+.list .list__tile {
+  border-radius: 5px;
+}
+.list .list__tile--active {
+  background-color: #2e3ca5;
+}
+</style>
+
+```
+
+Now we have three nav items in our navigation bar! If you click on the "home" and "about" links the router will take you to our home page, and an about page. The third link won't work yet. We'll need to create a new view, and then add it to the router. Let's start by saving a new file to src/views/List.vue with the following markup.
+```html
+<template>
+  <div class="pa-4">
+    <v-card class="pa-4">
+      <h2 class="secondary--text uppercase">Character List</h2>
+    </v-card>
   </div>
 </template>
 
 <script>
-
 export default {
   name: 'list',
-  data () {
+  data() {
     return {
       pokemons: []
     }
   },
   methods: {
-    async getPokemons() {
-
-    }
+    async getPokemons() {}
   }
-};
+}
 </script>
 ```
 
-Now let's open up src/router.js and add a route for this new page. Add the following to the bottom of the list of imports:
-
+Now let's open up src/router.js and add a route for this new page. Add the following to the top of the page after the imports.
 ```javascript
 import List from './views/List.vue'
 ```
 
-Then in the array of lists, under the one for the about page, add the following:
-
+Then in the array of routes, under the one for the about page, add the following.
 ```javascript
-	{
-      path: '/about',
-      name: 'about',
-      component: About
-    },
-	{
-      path: '/list',
-      name: 'list',
-      component: List
-    }
-  ]
+{
+    path: '/list',
+    name: 'list',
+    component: List
+  }
+]
 ```
 
-
-
 ### Axios & connectivity
-
 Now adding pokemon manually is okay, but lets try hitting up an actual API for the data. We are going to access the Poke API and see what we can add to our app.  
-add the following code to your getPokemon method:
-
+Import axios just inside the script tag.
 ```javascript
-const resp = await this.$http.get('https://pokeapi.co/api/v2/pokemon')
+import axios from 'axios'
+```
+
+Then add the following code to your getPokemon method.
+```javascript
+const resp = await axios.get('https://pokeapi.co/api/v2/pokemon')
 return resp.data
 ```
 
-now we can hook into the mounted vue lifecycle hook to make this call as soon as our element is ready
-
+Now we can hook into the mounted vue lifecycle hook to make this call as soon as our element is ready
 ![Vue lifecycle hooks](https://vuejs.org/images/lifecycle.png)
 
 we will be dealing with mounted to keep it simple as the element is ready and we can make any dom chances if neccessary.  
-Add the following after the data() method:
+Add the following after the data() method.
 ```javascript
 async mounted() {
   this.pokemons = await this.getPokemons()
   console.log(this.pokemons)
 }
 ```
-now refresh the page and open developer tools (f12) or right click the page and inspect element then press console.  
-You will see an object with a few options  
+
+Now refresh the page and open developer tools (f12) or right click the page and inspect element then press console.  
+You will see an object with a few options.
 ```javascript
 {
   count: 949, // the total number of pokemon in the database,
@@ -393,136 +451,218 @@ You will see an object with a few options
   results: Array(20) // the first 20 pokemon from the list
 }
 ```
-since we want the results we can add that to our getPokemon method return value
+
+Since we want the results we can add that to our getPokemon method return value.
 ```javascript
 const resp = await this.$http.get('https://pokeapi.co/api/v2/pokemon')
 return resp.data.results
 ```
-Now that we have a list of pokemon in our console, lets display them on our list page
-Add the following to your template after the master list
-```html
-<h1>Master List</h1>
-<v-list>
-  <v-list-tile v-for="pokemon in pokemons" :key="pokemon.name">
-    <v-list-tile-content class="pokemon-name">
-      {{ pokemon.name }}
-    </v-list-tile-content>
-  </v-list-tile>
-</v-list>
-```
-And add a style tag at the bottom, note this one is scoped so it only applies to this page
-```css
-<style scoped>
-  .pokemon-name {
-    text-transform: capitalize
-  }
-</style>
-```
 ### Components & Props
 
-Now lets make a new component which will allow us to view the pokemon! Create a new .vue file in the views folder, call it Pokemon.vue
+Now that we have a list of pokemon in our console, lets display them on our list page.  
+First lets create a new component. In the components folder, create a new Pokemon.vue file and fill it with the following.
 ```html
 <template>
-  <v-list-tile>
-  </v-list-tile>
+  <v-flex xs12 md6>
+    <v-list-tile avatar>
+      <v-list-tile-avatar>
+        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/001.png">
+      </v-list-tile-avatar>
+      <v-list-tile-content>
+        <v-list-tile-title class="capitalize title">Bulbasaur</v-list-tile-title>
+      </v-list-tile-content>
+    </v-list-tile>
+  </v-flex>
 </template>
+
 <script>
 export default {
-  name: "pokemon",
-  props: ['url', 'name'],
-  data () {
+  name: 'pokemon'
+}
+</script>
+```
+
+Now we can go back and access it from our list by first importing it after axios. @ is an alias for the src folder.
+```javascript
+import pokemon from '@/components/Pokemon.vue'
+``` 
+
+Then you must register it to be used as a local component by adding a new components property to your list object.
+```javascript
+components: {
+  pokemon
+}
+```
+
+Now we can access the new pokemon component in the template like so.
+```html
+<h2 class="secondary--text uppercase">Character List</h2>
+<v-container grid-list-md text-xs-center>
+  <v-layout row wrap>
+    <pokemon v-for="pokemon in pokemons" :key="pokemon.name"></pokemon>
+  </v-layout>
+</v-container>
+```
+
+We have a nice list of Bulbasaurs! But that's not exactly what we were going for. Let's pass the individual pokemon names into the component using props.  
+Props can be used just like a regular bindings. Lets pass in the index as well, which we will use for a little hack later. We can also remove the console.log here.
+```html
+<pokemon :name="monster.name" :number="index" v-for="(pokemon, index) in pokemons" :key="pokemon.name"></pokemon>
+```
+
+Let's go back into our pokemon component now and access the props using the props property.
+```javascript
+props: ['name', 'number']
+
+```
+```html
+<v-list-tile-title class="capitalize title">{{ name }}</v-list-tile-title>
+```
+
+Go back and refresh your page, you should now see the correct names for the pokemon! But we still have the Bulbasaur photo. To get around this we will use a computed property on this pokedex url. As you can see the current url uses the pokemon number 0 padded. To acheive this we will use a computed property on the number prop.
+```javascript
+computed: {
+  pokeImage() {
+    const pokeNumber = (this.number + 1).toString().padStart(3, '0')
+    return `https://assets.pokemon.com/assets/cms2/img/pokedex/full/${pokeNumber}.png`
+  }
+}
+```
+And change the image tag to a template string
+```html
+<img :src="pokeImage">
+```
+
+Lets throw in a "to" binding to the new show page we will be building. Which will automatically turn them into links.
+```html
+<v-list-tile :to="`/pokemon/${name}`" avatar>
+```
+
+And slap in a bit of style, it is scoped so these styles won't affect any other components.
+```html
+<style scoped>
+/deep/ .list__tile {
+  border-radius: 5px;
+  border: 1px solid #dfdfdf;
+  margin-bottom: 8px;
+}
+</style>
+
+```
+
+Now lets add the "show" view. Create a new component in the views folder called Show.vue and fill it with the following.
+```html
+<template>
+  <div class="pa-4">
+
+  </div>
+</template>
+
+<script>
+import axios from 'axios'
+
+export default {
+  name: 'show',
+  data() {
     return {
       pokemon: null
     }
   },
-  async mounted() {
-  },
+  async mounted() {},
   methods: {
-    async getPokemon() {
-    }
+    async getPokemons() {}
   }
-};
+}
 </script>
-<style scoped>
-
-</style>
 ```
 
-Now lets add it to our list view, so we can see these details in the list. Go back to List.vue and import the new component:
+Don't forget to add this new view to our router.js file, add a new entry:
+```javascript
+import Show from './views/Show.vue'
+.
+.
+{
+  path: '/pokemon/:name',
+  name: 'show',
+  component: Show
+}
+```
 
+And lets make an API call to get information about this specific pokemon, we can access their name from the url as seen below. Add the following to the mounted and getPokemon methods:
 ```javascript
-// @ is an alias to /src
-import pokemon from '@/components/Pokemon.vue'
-```
-Then, underneath the data add a new value for the component: 
-```javascript
-  components: {
-    pokemon
-  },
-```
-Now we can go back up to our template and add in the component:
-```html
-	<v-list v-if="pokemons">
-	  <pokemon v-for="pokemon in pokemons" 
-        :key="pokemon.name"
-        :name="pokemon.name"
-        :url="pokemon.url">
-	  </pokemon>
-	</v-list>
-```
-Now each of the pokemon will have their own instance of the pokemon component, which is getting passed the URL which contains the information for that pokemon. Now we need each to load in their data. Open up the Pokemon.vue component file again, and add the following to the getPokemon method:
-```javascript
-const resp = await this.$http.get(`https://pokeapi.co/api/v2/pokemon/${this.$route.params.name}`);
-return resp.data;
-```
-and to our mounted method:
-```javascript
-this.pokemon = await this.getPokemon()
-console.log(this.pokemon);
-```
-Now refresh the page and open up the developer tools again (f12). You should see an object with some information about the current pokemon!  
-Lets add some basic information to our template:
-```html
-<template>
-  <v-list-tile>
-    <v-list-tile-avatar >
-      <img v-if="pokemon" :src="pokemon.sprites.front_default" :alt="pokemon.name">
-    </v-list-tile-avatar>
-    <v-list-tile-content>
-      <v-list-tile-title><strong>Species: </strong> <span v-text="pokemon ? pokemon.name : name"></span></v-list-tile-title>
-      <v-list-tile-sub-title><strong>Type: </strong> <span v-if="pokemon" v-text="types"></span></v-list-tile-sub-title>
-    </v-list-tile-content>
-  </v-list-tile>
-</template>
-```
-Now save it and refresh your page, you will notice that you get an error. That is because the template is trying to access properties of the  
-pokemon object which doesn't exist yet. Lets throw a v-if on the main div
-```html
-<v-list-tile v-if="pokemon">
-```
-Your page should now show a basic page with the selected pokemon's name and picture
-
-### Computed Properties
-Now lets say we want to display the types that this pokemon is, since we don't know how many types the pokemon will have, and its a more complex object we can't just slap it into the template:
-```html
-<h4>Types: {{ pokemon.types }}</h4>
-```
-For this we can use a computed property. A computed property is a good way to offload any complex logic out of the template and into your javascript.  
-Add a new property to your component called computed:
-```javascript
-computed: {
-  types() {
-    const pokeTypes = this.pokemon.types.map(pt => pt.type.name)
-    return pokeTypes.join(' / ')
+async mounted() {
+  this.pokemon = await this.getPokemon()
+  console.log(this.pokemon)
+},
+methods: {
+  async getPokemon() {
+    const name = this.$route.params.name
+    const resp = await axios.get(`https://pokeapi.co/api/v2/pokemon/${name}`)
+    return resp.data
   }
 }
 ```
-Then call it in your template like a normal variable
-```html
-<v-list-tile-sub-title><strong>Type: </strong> <span v-text="types"></span></v-list-tile-sub-title>
-```
-And you should see the types!
 
+Now refresh and check your developer tools again to see what kind of data we are getting from this api. 
+Let's display some more info in our template:
+```html
+<template>
+  <div class="pa-4">
+    <v-card class="pa-4">
+      <div class="layout row align-center justify-start">
+        <v-avatar size="120">
+          <img :src="pokemon.sprites.front_default">
+        </v-avatar>
+        <h2 class="headline uppercase">{{ pokemon.name }}</h2>
+      </div>
+    </v-card>
+  </div>
+</template>
+```
+
+Refresh the page and you will see an error, that's because we are trying to access the sprites in the binding while pokemon is still null, lets throw an if around the whole card.
+```html
+<v-card class="pa-4" v-if="pokemon">
+```
+
+Now lets add some stats after the layout div inside of the v-card.
+```html
+<div class="stat" v-for="stat in pokemon.stats" :key="stat.stat.name">
+  <h4 class="capitalize title mb-2">{{ stat.stat.name }}</h4>
+  <div class="stat-bar" :style="statWidth(stat.base_stat)">
+    {{ stat.base_stat }}
+  </div>
+</div>
+```
+
+We can add a method to calculate the width of the stat bar:
+```javascript
+statWidth(baseStat) {
+  return {
+    width: `${baseStat}%`
+  }
+},
+```
+
+And slap in some style:
+```html
+<style scoped>
+.stat {
+  max-width: 500px;
+}
+.stat-bar {
+  text-align: right;
+  color: white;
+  font-weight: bold;
+  padding: 12px 24px;
+  border-radius: 5px;
+  background-color: red;
+  margin-bottom: 16px;
+}
+</style>
+```
+
+And we're done!
 
 ### Watchers
 
