@@ -169,11 +169,19 @@ Let's open up the file src/views/About.vue. You'll see there's an element titled
 Down in the scripts section let's add the following new data to it:
 
 ```javascript
+<script>
+// @ is an alias to /src
+import HelloWorld from '@/components/HelloWorld.vue'
+
+export default {
+  name: 'home',
   data () {
     return {
-      msg: "Testing v-model"
+      msg: "Testing v-model",
     }
-  },
+  }
+};
+</script>
 ```
 Save and open up your browser to your local host. You'll see the message "Testing v-model" with an input below it. Try changing the text in the input. The header above the input updates as you type!
 
