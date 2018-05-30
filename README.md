@@ -454,7 +454,7 @@ You will see an object with a few options.
 
 Since we want the results we can add that to our getPokemon method return value.
 ```javascript
-const resp = await this.$http.get('https://pokeapi.co/api/v2/pokemon')
+const resp = await axios.get('https://pokeapi.co/api/v2/pokemon')
 return resp.data.results
 ```
 ### Components & Props
@@ -507,7 +507,7 @@ Now we can access the new pokemon component in the template like so.
 We have a nice list of Bulbasaurs! But that's not exactly what we were going for. Let's pass the individual pokemon names into the component using props.
 Props can be used just like a regular bindings. Lets pass in the index as well, which we will use for a little hack later. We can also remove the console.log here.
 ```html
-<pokemon :name="monster.name" :number="index" v-for="(pokemon, index) in pokemons" :key="pokemon.name"></pokemon>
+<pokemon :name="pokemon.name" :number="index" v-for="(pokemon, index) in pokemons" :key="pokemon.name"></pokemon>
 ```
 
 Let's go back into our pokemon component now and access the props using the props property.
