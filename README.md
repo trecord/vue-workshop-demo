@@ -9,9 +9,9 @@ To start off with, we'll open our terminal. You'll want to have NPM or Yarn inst
 
 ``` bash
 # Install
-npm install -g @vue/cli
+npm install -g @vue/cli@3.0.0-beta.11
 # or
-yarn global add @vue/cli
+yarn global add @vue/cli@3.0.0-beta.11
 ```
 
 Once that is done you should have the newest version of Vue-cli. Check that you do by running the following:
