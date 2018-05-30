@@ -154,7 +154,7 @@ Data in Vue can be used to store booleans, integers, strings, arrays, and object
 
 #### Data binding
 
-Let's open up the file src/views/About.vue. You'll see there's an element titled "about." Let's get rid of that for now, and replace it with the following template:
+Let's open up the file src/views/Home.vue. You'll see there's a bunch of content in the template. Let's get rid of that for now, and replace it with the following template:
 
 ```html
 <template>
