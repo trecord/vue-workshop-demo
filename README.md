@@ -9,9 +9,9 @@ To start off with, we'll open our terminal. You'll want to have NPM or Yarn inst
 
 ``` bash
 # Install
-npm install -g @vue/cli
+npm install -g @vue/cli@3.0.0-beta.11
 # or
-yarn global add @vue/cli
+yarn global add @vue/cli@3.0.0-beta.11
 ```
 
 Once that is done you should have the newest version of Vue-cli. Check that you do by running the following:
@@ -20,10 +20,10 @@ Once that is done you should have the newest version of Vue-cli. Check that you 
 vue -V
 ```
 
-This should return should be 3.0.0-beta.x. If it does, we're ready to start getting set up. 
+This should return should be 3.0.0-beta.x. If it does, we're ready to start getting set up.
 
 ### Install the project
-Enter the following in your terminal: 
+Enter the following in your terminal:
 
 ``` bash
 vue create vvjs
@@ -32,12 +32,12 @@ vue create vvjs
 You will be given a set of options. You will want to "manually" select features. Make sure to add Babel and Router. Optionally you could select the Linter / Formatter which just keeps your code looking clean. Here's the setup that we will use for our installation:
 
 1) Manually select features
-2) Babel and Router should be selected, press space bar to select them.  
-![Vue Setup: Installing Vue](static/images/vue_setup_1.png)  
-4) Config should be in package.json  
-![Vue Setup: Installing Vue](static/images/vue_setup_2.png)  
+2) Babel and Router should be selected, press space bar to select them.
+![Vue Setup: Installing Vue](static/images/vue_setup_1.png)
+4) Config should be in package.json
+![Vue Setup: Installing Vue](static/images/vue_setup_2.png)
 5) "n" do not save
-6) Use NPM  
+6) Use NPM
 ![Vue Setup: Installing Vue](static/images/vue_setup_3.png)
 
 Once the initial installation is completed, you'll have a working project! You can already see something if you run the following:
@@ -59,8 +59,8 @@ vue add vuetify
 1) "y" allow Vuetify to replace app.vue and helloworld.vue
 2) "y" use custom theme
 3) "n" use a la carte components
-4) "y" use babel/polyfilly  
-![Vue Setup: Vuetify](static/images/vuetify_setup_1.png)  
+4) "y" use babel/polyfilly
+![Vue Setup: Vuetify](static/images/vuetify_setup_1.png)
 
 We will now install axios - an HTTP client for making API calls:
 
@@ -89,7 +89,7 @@ main.content {
 	width: 1024px;
 }
 </style>
-``` 
+```
 
 If you look at the template section for App.vue (at the top), you'll see that there's a component called "v-navigation-drawer" that has something called a "v-model" which is set to "drawer." If you scroll down a little to the "scripts" section, you will see that there is a set of "data" which includes "drawer"... and it is set to "true". The values in the data here are what is controlling whether the nav bar should be displayed or not!
 ```html
@@ -145,10 +145,10 @@ export default {
   }
 }
 ```
-If you reload your page, that annoying nav won't be open by default, and we'll have our new title. How did the title change? If you scroll back up to the template, you'll see a "v-toolbar-title" element that has a v-text attribute set to "title."   
+If you reload your page, that annoying nav won't be open by default, and we'll have our new title. How did the title change? If you scroll back up to the template, you'll see a "v-toolbar-title" element that has a v-text attribute set to "title."
 ![Vue Data: Drawer 2](static/images/nav_4.png)
 
-Data in Vue can be used to store booleans, integers, strings, arrays, and objects. It's the basic building block of working with Vue, so why don't we dive a little deeper into it. 
+Data in Vue can be used to store booleans, integers, strings, arrays, and objects. It's the basic building block of working with Vue, so why don't we dive a little deeper into it.
 
 ### Data Binding and Methods
 
@@ -189,20 +189,20 @@ data () {
       msg: "Testing v-model",
       monsters: [
         {
-          name:"Cougher", 
+          name:"Cougher",
           species:"Koffing",
           avatar:"https://cdn.bulbagarden.net/upload/1/17/109Koffing.png",
           type: "Gas/Poison"
         },
         {
-          name:"Zapper", 
-          species:"Jolteon", 
+          name:"Zapper",
+          species:"Jolteon",
           avatar:"https://cdn.bulbagarden.net/upload/b/bb/135Jolteon.png",
           type: "Electric"
         },
         {
-          name:"Scratcher", 
-          species:"Mankey", 
+          name:"Scratcher",
+          species:"Mankey",
           avatar:"https://cdn.bulbagarden.net/upload/4/41/056Mankey.png",
           type: "Fighting"
         }
@@ -234,7 +234,7 @@ Notice that the element "v-list-tile" has the following attribute: v-for="monste
 If you looked closely at App.vue, you'd have seen there is also a button with the element name "v-toolbar-side-icon" that has an attribute called "@click.stop" that was setting the "drawer" to != "drawer".
 ![Vue Data: Drawer](static/images/nav_2.png)
 
-This is what was toggling the display of the nav item. But what if we want to have a method that is more than one line long? Let's try adding an input and button that allows us to add new monsters to our roster that we can name. Let's start by adding a field in our data to hold our monster's name: 
+This is what was toggling the display of the nav item. But what if we want to have a method that is more than one line long? Let's try adding an input and button that allows us to add new monsters to our roster that we can name. Let's start by adding a field in our data to hold our monster's name:
 
 ```javascript
 data () {
@@ -264,8 +264,8 @@ This will give us a little form with an input that allows us to specify a name, 
   methods: {
     addPokemon: function () {
       let newPokemon = {
-          name: this.newName, 
-          species: "Charmander", 
+          name: this.newName,
+          species: "Charmander",
           avatar: "https://cdn.bulbagarden.net/upload/thumb/7/73/004Charmander.png/500px-004Charmander.png",
           type: "Fire"
         };
@@ -309,7 +309,7 @@ warning: '#FFC107'
 ```
 
 ### Routing
-Alright we're done with learning the basics, now lets create a real application! replace your App.vue with the following.  
+Alright we're done with learning the basics, now lets create a real application! replace your App.vue with the following.
 ```html
 <template>
   <v-app>
@@ -417,7 +417,7 @@ Then in the array of routes, under the one for the about page, add the following
 ```
 
 ### Axios & connectivity
-Now adding pokemon manually is okay, but lets try hitting up an actual API for the data. We are going to access the Poke API and see what we can add to our app.  
+Now adding pokemon manually is okay, but lets try hitting up an actual API for the data. We are going to access the Poke API and see what we can add to our app.
 Import axios just inside the script tag.
 ```javascript
 import axios from 'axios'
@@ -432,7 +432,7 @@ return resp.data
 Now we can hook into the mounted vue lifecycle hook to make this call as soon as our element is ready
 ![Vue lifecycle hooks](https://vuejs.org/images/lifecycle.png)
 
-we will be dealing with mounted to keep it simple as the element is ready and we can make any dom chances if neccessary.  
+we will be dealing with mounted to keep it simple as the element is ready and we can make any dom chances if neccessary.
 Add the following after the data() method.
 ```javascript
 async mounted() {
@@ -441,7 +441,7 @@ async mounted() {
 }
 ```
 
-Now refresh the page and open developer tools (f12) or right click the page and inspect element then press console.  
+Now refresh the page and open developer tools (f12) or right click the page and inspect element then press console.
 You will see an object with a few options.
 ```javascript
 {
@@ -459,7 +459,7 @@ return resp.data.results
 ```
 ### Components & Props
 
-Now that we have a list of pokemon in our console, lets display them on our list page.  
+Now that we have a list of pokemon in our console, lets display them on our list page.
 First lets create a new component. In the components folder, create a new Pokemon.vue file and fill it with the following.
 ```html
 <template>
@@ -485,7 +485,7 @@ export default {
 Now we can go back and access it from our list by first importing it after axios. @ is an alias for the src folder.
 ```javascript
 import pokemon from '@/components/Pokemon.vue'
-``` 
+```
 
 Then you must register it to be used as a local component by adding a new components property to your list object.
 ```javascript
@@ -504,7 +504,7 @@ Now we can access the new pokemon component in the template like so.
 </v-container>
 ```
 
-We have a nice list of Bulbasaurs! But that's not exactly what we were going for. Let's pass the individual pokemon names into the component using props.  
+We have a nice list of Bulbasaurs! But that's not exactly what we were going for. Let's pass the individual pokemon names into the component using props.
 Props can be used just like a regular bindings. Lets pass in the index as well, which we will use for a little hack later. We can also remove the console.log here.
 ```html
 <pokemon :name="monster.name" :number="index" v-for="(pokemon, index) in pokemons" :key="pokemon.name"></pokemon>
@@ -603,7 +603,7 @@ methods: {
 }
 ```
 
-Now refresh and check your developer tools again to see what kind of data we are getting from this api. 
+Now refresh and check your developer tools again to see what kind of data we are getting from this api.
 Let's display some more info in our template:
 ```html
 <template>
